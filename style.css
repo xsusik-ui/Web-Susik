@@ -183,3 +183,6 @@ select {
 .nova-kniha { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 .nova-kniha input { padding: 8px; font-size: 16px; }
 .nova-kniha button { padding: 8px 14px; cursor: pointer; }
+
+.zmena-ceny { margin-bottom: 12px; }
+.zmena-ceny input { padding: 6px; font-size: 16px; width: 110px; }

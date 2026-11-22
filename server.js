@@ -29,9 +29,11 @@ app.post("/api/knihy", (req, res) => {
 });
 app.put("/api/knihy/:id", (req, res) => {
     const { nazov, autor, rok, cena } = req.body;
+    if (!nazov || !autor || !Number.isFinite(Number(rok)) || !Number.isFinite(Number(cena)))
+        return res.status(400).send("Neplatne udaje");
 
-    const sql = "UPDATE knihy SET nazov = ?, autor = ?, rok = ?, cena = ? WHERE id = ?";
-    db.query(sql, [nazov, autor, rok, cena, req.params.id], (error, vysledok) => {
+    const sql = "UPDATE knihy SET NAZOV = ?, AUTOR = ?, ROK = ?, cena = ? WHERE ID = ?";
+    db.query(sql, [nazov, autor, Number(rok), Number(cena), req.params.id], (error, vysledok) => {
         if (error) return res.status(500).send("Chyba SQL");
         if (!vysledok.affectedRows) return res.sendStatus(404);
         res.send("Kniha upravená");
@@ -41,7 +43,7 @@ app.patch("/api/knihy/:id/cena", (req, res) => {
     const zmena = Number(req.body.zmena);
     if (!Number.isFinite(zmena))
         return res.status(400).send("Neplatna zmena");
-    const sql = "UPDATE knihy SET cena = cena + ? WHERE id = ?";
+    const sql = "UPDATE knihy SET cena = cena + ? WHERE ID = ?";
     db.query(sql, [zmena, req.params.id], (error, vysledok) => {
         if (error) return res.status(500).send("Chyba SQL");
         if (!vysledok.affectedRows) return res.sendStatus(404);
@@ -53,6 +55,11 @@ app.delete("/api/knihy/:id", (req, res) => {
         if (error) return res.status(500).send("Chyba SQL");
         res.send("Kniha vymazana");
     });
+});
+
+// 404 - musí byť až za API endpointmi, pred app.listen
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, "404.html"));
 });
 
 app.listen(4000, () => console.log("http://localhost:4000"));

@@ -118,6 +118,23 @@ function nacitajKnihy() {
                     cena: bunky[4] ?? ""
                 });
 
+                const zmenaCeny = document.createElement("button");
+                zmenaCeny.textContent = "Zmeniť cenu";
+                zmenaCeny.onclick = () => {
+                    const zmena = Number(document.getElementById("cena").value);
+                    if (document.getElementById("cena").value === "" || !Number.isFinite(zmena))
+                        return alert("Zadaj zmenu ceny do poľa 'Zmena ceny'");
+                    fetch("/api/knihy/" + bookId + "/cena", {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ zmena })
+                    }).then(r => {
+                        if (!r.ok) return alert("Chyba pri zmene ceny");
+                        nacitajKnihy();
+                    });
+                };
+
+                bunkaAkcia.appendChild(zmenaCeny);
                 bunkaAkcia.appendChild(nastavenia);
                 bunkaAkcia.appendChild(tlacidlo);
                 riadok.appendChild(bunkaAkcia);
